@@ -1,0 +1,33 @@
+---
+title: "Game_Sales_Report"
+format: pdf
+editor: visual
+---
+
+Group 18: Adeer Siddiqui, Tuan Pham, Uyen Vi Phan
+
+Spring 2025
+
+## Introduction
+
+\newpage
+
+## Linear Regression
+
+\newpage
+
+## Decision Tree
+
+\newpage
+
+## Conclusion
+
+\newpage
+
+## Bibliography
+
+\newpage
+
+## Source Code
+
+\newpage
