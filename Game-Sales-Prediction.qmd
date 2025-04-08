@@ -26,8 +26,91 @@ Spring 2025
 
 ## Bibliography
 
-\newpage
+-    Data set: <https://www.kaggle.com/datasets/hosammhmdali/video-game-sales-2024>
 
 ## Source Code
+
+#### Code for Data Preparation//Tuan Pham
+
+```{r}
+
+```
+
+#### Code for Regression Tree//Uyen Vi Phan
+
+```{r}
+library(readr)
+game <- read_csv("game.csv")
+View(game)
+attach(game)
+
+categories <- unique(game$console) 
+length(categories)
+
+categories <- unique(game$genre) 
+length(categories)
+
+categories <- unique(game$publisher) 
+length(categories)
+
+categories <- unique(game$developer) 
+length(categories)
+
+categories <- unique(game$console) 
+length(categories)
+
+game.pub.types = table(game$publisher)
+View(game.pub.types)
+
+game.dev.types = table(game$developer)
+View(game.dev.types)
+
+game.gen.types = table(game$genre)
+View(game.gen.types)
+
+game.con.types = table(game$console)
+View(game.con.types)
+
+game.lm = lm(total_sales ~ console+genre+critic_score+release_month, data = game)
+summary(game.lm) #cant use t-test bc of the categorial vars
+
+
+step(game.lm) #backwards stepwise regression
+
+
+game.sample = sample(1:nrow(game),nrow(game)*0.8)
+game.train = game[game.sample,]
+game.test = game[-game.sample,]
+
+game.lm = lm(total_sales ~ console + genre + critic_score + release_month, data = game.train)
+
+game.pred = predict(game.lm, newdata = game.test)
+game.lm.MSE= mean((game.pred-game.test$total_sales)^2)
+
+
+
+
+game.lm.MSE=rep(0,10)
+for (i in 1:10){
+  set.seed(i)
+  game.sample = sample(1:nrow(game),nrow(game)*0.8)
+  game.train = game[game.sample,]
+  game.test = game[-game.sample,]
+  
+  game.lm = lm(total_sales ~ console + genre + publisher + critic_score + 
+                 release_month, data = game.train)
+  
+  game.pred = predict(game.lm, newdata=game.test)
+  game.lm.MSE[i]= mean((game.pred-game.test$total_sales)^2)
+}
+
+game.lm.MSE
+```
+
+#### Code for Decision Tree//Adeer Siddiqui
+
+```{r}
+
+```
 
 \newpage
