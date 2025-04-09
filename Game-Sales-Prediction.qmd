@@ -8,68 +8,155 @@ Group 18: Adeer Siddiqui, Tuan Pham, Uyen Vi Phan
 
 Spring 2025
 
-## Introduction
+## 1. Introduction
 
 \newpage
 
-## Linear Regression
+## 2. Linear Regression // Uyen Vi Phan
+
+Linear Regression is a parametric model that seeks to represent the relationship between the output and input variables linearly. Our objective is to be able to predict and find the factors that affect the `total_sales` of [global video game sales data from 2024](https://www.kaggle.com/datasets/hosammhmdali/video-game-sales-2024). Our group decided to choose Linear Regression to model our data because it provides a simple linear equation that can be easily calculated by hand. It gives us weights for each predictor that indicate how much `total_sales` changes with one unit increase or decrease of each of our predictors.
+
+In addition to this, Linear Regression offers a simple and interpretative method that can be used to predict `total_sales`. However, due to its simplicity, it has trouble effectively modeling complex data and the data must fit specific assumptions for Linear Regression to be effective: the predictors must have a linear relationship with `total_sales` , each observation must be independent of one another, the data must be normally distributed, and they must have equal variance.
+
+#### a. Model Equation
+
+The Linear Regression model equation is displayed below: $$ y = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_nx_n + \epsilon$$
+
+Where y represents our output variable, `total_sales`, $\beta_0$ represents our model intercept, $\beta_i$ is our coefficient for our predictor $x_i$ and $\epsilon$ is our error term.
+
+#### b. Process
+
+In order to properly fit the model to our data, we must exclude some of our data that may have no affect on the `total_sales`. Our initial data cleanup already removed a lot of unnecessary variables, but we could go even further. I initially attempted to pick which predictors to keep using their p-values. I quickly realized that since our data has so many categorical variables with a lot of categories, eliminating predictors based on p-values was not efficient. The output is withheld due to the length of the results.
+
+```{r}
+#| output: false
+library(readr)
+game <- read_csv("game.csv")
+attach(game)
+
+game.lm = lm(total_sales ~ ., data = game)
+summary(game.lm)
+```
+
+The method for determining what predictors are significant in predicting `total_sales` that worked is backwards stepwise regression using the `step()` function, which ended up working fine. Stepwise regression concluded that `console`, `genre`, `publisher`, `critic_score` and `release_month` were significant in predicting `total_sales`. The output is withheld due to the length of the results.
+
+```{r}
+#| output: false
+step(game.lm)
+```
+
+However, when it came to validating the data, another problem came up. Since our data has so many categorical variables with many different categories, sometimes all the observations under one category could end up in the test set and never appear in the training set, leading to an error because the model is not trained to predict `total_sales` using that specific category. To remedy this, I first looked at all the categories from each categorical predictor and checked their frequencies. I decided remove `publisher` and `developer` from consideration, as they had over 200 different categories. Including them could lead to overfitting our model. `genre` and `console` only had less than 30 categories, so they could still be significant in predicting `total_sales`. I then repeated the `step()` function again on the remaining variables. The `step()` function concluded that `console`, `genre`, `critic_score` and `release_month` were significant in predicting `total_sales`.
+
+```{r}
+game.pub.types = table(game$publisher)
+View(game.pub.types)
+game.dev.types = table(game$developer)
+View(game.dev.types)
+game.gen.types = table(game$genre)
+View(game.gen.types)
+game.con.types = table(game$console)
+View(game.con.types)
+
+game.lm = lm(total_sales ~ console+genre+critic_score+release_month, data = game)
+step(game.lm)
+```
+
+#### c. Validation
+
+In order to verify how well our model predicts `total_sales` to new data, we must perform cross-validation to obtain the average Mean Squared Error. For this model, we performed the validation method 10 times. Despite removing `publisher` and `developer` from the model, we still had the issue where whole categories will go into the testing set, however not to as a severe degree as before. Because of this, it was easy to find a set of seeds that do not yield this error.
+
+```{r}
+workable_seeds = c(3, 6, 7, 8, 10, 11, 13, 14, 17, 22)
+
+game.lm.MSE=rep(0,10)
+for (i in 1:10){
+  set.seed(workable_seeds[i])
+  game.sample = sample(1:nrow(game),nrow(game)*0.8)
+  game.train = game[game.sample,]
+  game.test = game[-game.sample,]
+  
+  game.lm = lm(total_sales ~ console + genre  + critic_score + 
+                 release_month, data = game.train)
+  
+  game.pred = predict(game.lm, newdata=game.test)
+  game.lm.MSE[i]= mean((game.pred-game.test$total_sales)^2)
+}
+
+mean(game.lm.MSE)
+```
+
+#### d. Results
+
+Here is the resulting linear regression model that best predicts `total_sales` .
+
+```{r}
+game.lm = lm(total_sales ~ console + genre  + critic_score + release_month, data = game)
+summary(game.lm)
+```
+
+The chosen predictord are `console`, `genre`, `critic_score` and `release_month`, with `critic_score` and `release_month` being the most significant based on their p-values. The average MSE from performing cross-validation in part C is `1.39` which is not ideal. This is most likely due to the many categorical predictors in our data. They do not form a linear relationship with `total_sales` which is needed for Linear Regression to be effective.
 
 \newpage
 
-## Decision Tree
+## 3. Decision Tree
+
+#### a. Model Equation
+
+#### b. Process
+
+#### c. Cross Validation
+
+#### d. Results
 
 \newpage
 
-## Conclusion
+## 4. Conclusion
 
 \newpage
 
-## Bibliography
+## 5. Bibliography
 
 -    Data set: <https://www.kaggle.com/datasets/hosammhmdali/video-game-sales-2024>
 
-## Source Code
+## 6. Source Code
 
-#### Code for Data Preparation//Tuan Pham
+#### a. Code for Data Preparation//Tuan Pham
 
 ```{r}
+#| output: false
 
 ```
 
-#### Code for Linear Regression //Uyen Vi Phan
+#### b. Code for Linear Regression //Uyen Vi Phan
 
 ```{r}
+#| output: false
 library(readr)
 game <- read_csv("game.csv")
-View(game)
+#View(game)
 attach(game)
 
+#check how many categories in each colum
 categories <- unique(game$console) 
 length(categories)
-
 categories <- unique(game$genre) 
 length(categories)
-
 categories <- unique(game$publisher) 
 length(categories)
-
 categories <- unique(game$developer) 
 length(categories)
-
 categories <- unique(game$console) 
 length(categories)
 
+#view frequency of each column
 game.pub.types = table(game$publisher)
-View(game.pub.types)
-
+#View(game.pub.types)
 game.dev.types = table(game$developer)
-View(game.dev.types)
-
+#View(game.dev.types)
 game.gen.types = table(game$genre)
-View(game.gen.types)
-
+#View(game.gen.types)
 game.con.types = table(game$console)
-View(game.con.types)
+#View(game.con.types)
 
 game.lm = lm(total_sales ~ console+genre+critic_score+release_month, data = game)
 summary(game.lm) #cant use t-test bc of the categorial vars
@@ -77,27 +164,27 @@ summary(game.lm) #cant use t-test bc of the categorial vars
 
 step(game.lm) #backwards stepwise regression
 
-
+set.seed(22) #keep incrementing until find good seed
 game.sample = sample(1:nrow(game),nrow(game)*0.8)
 game.train = game[game.sample,]
 game.test = game[-game.sample,]
 
-game.lm = lm(total_sales ~ console + genre + critic_score + release_month, data = game.train)
+game.lm = lm(total_sales ~ console+genre+critic_score+release_month, data = game)
 
 game.pred = predict(game.lm, newdata = game.test)
 game.lm.MSE= mean((game.pred-game.test$total_sales)^2)
 
 
-
+workable_seeds = c(3, 6, 7, 8, 10, 11, 13, 14, 17, 22)
 
 game.lm.MSE=rep(0,10)
 for (i in 1:10){
-  set.seed(i)
+  set.seed(workable_seeds[i])
   game.sample = sample(1:nrow(game),nrow(game)*0.8)
   game.train = game[game.sample,]
   game.test = game[-game.sample,]
   
-  game.lm = lm(total_sales ~ console + genre + publisher + critic_score + 
+  game.lm = lm(total_sales ~ console + genre  + critic_score + 
                  release_month, data = game.train)
   
   game.pred = predict(game.lm, newdata=game.test)
@@ -107,10 +194,11 @@ for (i in 1:10){
 game.lm.MSE
 ```
 
-#### Code for Regression Tree//Adeer Siddiqui
+#### c. Code for Regression Tree//Adeer Siddiqui
 
 ```{r}
-
+#| output: false
+#| 
 ```
 
 \newpage
