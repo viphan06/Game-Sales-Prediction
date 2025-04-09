@@ -36,7 +36,7 @@ Spring 2025
 
 ```
 
-#### Code for Regression Tree//Uyen Vi Phan
+#### Code for Linear Regression //Uyen Vi Phan
 
 ```{r}
 library(readr)
@@ -107,7 +107,7 @@ for (i in 1:10){
 game.lm.MSE
 ```
 
-#### Code for Decision Tree//Adeer Siddiqui
+#### Code for Regression Tree//Adeer Siddiqui
 
 ```{r}
 
