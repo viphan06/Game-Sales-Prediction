@@ -8,31 +8,43 @@ Group 18: Adeer Siddiqui, Tuan Pham, Uyen Vi Phan
 
 Spring 2025
 
-## 1. Introduction
-For our project, we decided to analyze the global video game sales data from 2024, sourced from Kaggle.com. Our inspiration comes from our love for video games
-and we are curious about which factors determine a video game’s success. This dataset has 64017 rows with 14 columns. The variables are listed below:
-img: An url to an image of the game packaging on vgchartz.com
-title : The title of the game
-console : The console the game is released for
-genre : The genre of the game
-publisher : The publisher of the game
-developer: The developer of the game
-critic_score: The metacritic score (out of 10)
-total_sales : Total sales globally in millions of USD
-na_sales : North American sales in millions of USD
-jp_sales : Japanese sales in millions of USD
-pal_sales : European & African sales in millions of USD
-other_sales : Rest of world sales of copies in millions of USD
-release_date : Date the game was released on
-last_update : Date the data was last updated
-Of the 14 variables, our group will most likely be examining the console, genre, publisher, developer, critic score, and release date (mostly focusing on the month) as potential predictors. The title of the game and the game packaging serve as an identifier and are solely unique to each game, so they will not contribute to sales prediction. Sales in individual countries are irrelevant as we are focused on predicting total sales. We drop the last_update variable because it likely reflects when the dataset entry was edited, not something about the game itself. It’s not informative for sales analysis and keeping it might mislead people into thinking it's an in-game update date, which it’s probably not.
-Our response variable will be total sales.
-Our primary objective is to predict video game sales based on genre, publisher, developer, critic score, and release month. Our main question is: what is the
-predicted total sales of a game based on genre, publisher, developer, critic score, and release month. 
-The models we want to examine for this project are Linear Regression and Decision Tree, and use cross-validation for model comparison. Using both models
-together allows us to compare results and identify the best approach for predicting game sales.
-There are 4 main tasks for this project: data preparation, creating the first model, creating the second model, and interpreting the models into the report. Tuan Pham will work on data preparation and assist the other group members build their models. Uyen Vi Phan will create and analyze the Linear Regression model, and Adeer Siddiqui will create and analyze the Decision Tree Model. Then our group will combine and discuss our works to make the final report.
+## 1. Introduction // Tuan Pham
 
+For our project, we decided to analyze the `global video game sales` data from 2024, sourced from Kaggle.com. Our inspiration comes from our love for video games and we are curious about which factors determine a video game’s success. This dataset has `64017 rows` with `14 columns`. The variables are listed below:
+
+`img`: An url to an image of the game packaging on vgchartz.com
+
+`title` : The title of the game
+
+`console` : The console the game is released for
+
+`genre` : The genre of the game
+
+`publisher` : The publisher of the game
+
+`developer`: The developer of the game
+
+`critic_score`: The metacritic score (out of 10)
+
+`total_sales` : Total sales globally in millions of USD
+
+`na_sales` : North American sales in millions of USD
+
+`jp_sales` : Japanese sales in millions of USD
+
+`pal_sales` : European & African sales in millions of USD
+
+`other_sales` : Rest of world sales of copies in millions of USD
+
+`release_date` : Date the game was released on
+
+`last_update` : Date the data was last updated
+
+Of the 14 variables, our group will most likely be examining the `console`, `genre`, `publisher`, `developer`, `critic score`, and `release date` (mostly focusing on the month) as potential predictors. The `title` of the game and the`img` serve as an identifier and are solely unique to each game, so they will not contribute to sales prediction. Sales in individual countries are irrelevant as we are focused on predicting `total_sales`. We drop the `last_update` variable because it likely reflects when the dataset entry was edited, not something about the game itself. It’s not informative for sales analysis and keeping it might mislead people into thinking it's an in-game update date, which it’s probably not. Our response variable will be `total_sales`.
+
+Our primary objective is to predict video game sales based on `genre`, `publisher`, `developer`, `critic score`, and `release month`. Our main question is: what is the predicted total sales of a game based on `genre`, `publisher`, `developer`, `critic score`, and `release month`. The models we want to examine for this project are Linear Regression and Decision Tree, and use cross-validation for model comparison. Using both models together allows us to compare results and identify the best approach for predicting game sales.
+
+There are 4 main tasks for this project: data preparation, creating the first model, creating the second model, and interpreting the models into the report. Tuan Pham worked on data preparation and assist the other group members build their models. Uyen Vi Phan created and analyzed the Linear Regression model, and Adeer Siddiqui created and analyzed the Decision Tree Model. Then our group combined and discussed our works to make the final report.
 
 \newpage
 
@@ -136,6 +148,10 @@ The chosen predictord are `console`, `genre`, `critic_score` and `release_month`
 
 ## 4. Conclusion
 
+As our previous analyses on our game data has shown, the \_\_\_\_\_ model yielded the lowest MSE with a value of \_\_\_\_\_, making it the most effective at computing `total_sales`. This is most likely due to \_\_\_\_\_.
+
+These findings will be valuable to game developers to get a general idea of how successful their game will be. It will also provide insight into the general audience's interest into what type of games they enjoy, and what factors they consider before purchasing a game.
+
 \newpage
 
 ## 5. Bibliography
@@ -148,6 +164,7 @@ The chosen predictord are `console`, `genre`, `critic_score` and `release_month`
 
 ```{r}
 #| output: false
+#| eval: false
 #include necessary library
 library(tidyverse)
 library(lubridate)
@@ -170,6 +187,7 @@ game$developer <- factor(game$developer)
 
 ```{r}
 #| output: false
+#| eval: false
 library(readr)
 game <- read_csv("game.csv")
 #View(game)
@@ -237,6 +255,7 @@ game.lm.MSE
 
 ```{r}
 #| output: false
+#| eval: false
 #| 
 ```
 
