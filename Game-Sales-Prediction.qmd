@@ -148,7 +148,7 @@ The chosen predictord are `console`, `genre`, `critic_score` and `release_month`
 
 ## 4. Conclusion
 
-As our previous analyses on our game data has shown, the \_\_\_\_\_ model yielded the lowest MSE with a value of \_\_\_\_\_, making it the most effective at computing `total_sales`. This is most likely due to \_\_\_\_\_.
+As our previous analyses on our game data has shown, the \_\_\_\_\_ model yielded the lowest MSE with a value of \_\_\_\_\_, making it the most effective at computing `total_sales`. This is most likely due to \_\_\_\_\_....
 
 These findings will be valuable to game developers to get a general idea of how successful their game will be. It will also provide insight into the general audience's interest into what type of games they enjoy, and what factors they consider before purchasing a game.
 
