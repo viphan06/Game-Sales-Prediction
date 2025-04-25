@@ -134,15 +134,97 @@ The chosen predictord are `console`, `genre`, `critic_score` and `release_month`
 
 \newpage
 
-## 3. Decision Tree
+## 3. Decision Tree // Adeer Siddiqui
+
+A decision tree models the relationship between input and output variables by using a series of nodes that branch based on certain variables until they reach a terminal node, which represents the final estimation of the output. The decision tree model is useful to analyze this dataset because it is able to account for a number of different variables and have a complex system of priorities, where one variable may not be considered more significant than another unless certain conditions are met in a particular case.
+
+Decision trees tend to be incredibly easy and intuitive to read and interpret, since it involves a simple true/false statement at every single node, which can be used to branch until a terminal node is reached for an estimation. The possibility of overfitting, however, is quite present in decision trees, since the degree of complexity they allow can be so extreme that it may only work on the training set, and fail to account for any variable scenarios.
 
 #### a. Model Equation
 
+There is no set equation for the decision tree model, as the tree was generated for this particular dataset using the below command:
+
+```{r}
+#| output: false
+#| eval: false
+game.tree <- tree(total_sales ~ ., data = game)
+```
+
 #### b. Process
+
+As done with the linear regression model, we excluded the variables that may have no effect on the `total_sales` or may cause issues that prevent the model from functioning properly. This means that the variables used to predict `total_sales` with the decision tree model were `console`, `genre`,`critic_score`, and `release_month`.
+
+```{r}
+#| output: false
+#| eval: false
+game.tree <- tree(total_sales ~ ., data = game)
+plot(game.tree)
+text(game.tree, pretty = 0)
+```
+
+Using the above code to generate the decision tree model, we were able to produce this output:
+
+![](images/clipboard-402514387.png)
 
 #### c. Cross Validation
 
+In order to test the generated tree, we performed cross-validation to obtain the average Mean Squared Error, validating a total of 10 times. In order to maintain consistency with the linear regression model, we used the same set of 10 seeds to test the decision tree model.
+
+Alongside testing the decision tree, we also generated a pruned decision tree at every iteration, testing to see if it would produce an improved MSE. This was all performed in the same loop, for which the code is below:
+
+```{r}
+#| output: false
+#| eval: false
+workable_seeds <- c(3,6,7,8,10,11,13,14,17,22)
+game.tree.MSE <- rep(0,10)
+game.pruned.MSE <- rep(0,10)
+for (i in 1:10) {
+  set.seed(workable_seeds[i])
+  # Train/Test decision tree
+  game.sample <- sample(1:nrow(game), nrow(game) * 0.8)
+  game.train <- game[game.sample, ]
+  game.test <- game[-game.sample, ]
+  game.tree <- tree(total_sales ~ ., data = game.train)
+  game.pred <- predict(game.tree, newdata = game.test)
+  game.tree.MSE[i] = mean((game.pred - game.test$total_sales)^2)
+  
+  # Cross Validation
+  cv.game.tree <- cv.tree(game.tree)
+  best.size <- cv.game.tree$size[which.min(cv.game.tree$dev)]
+  
+  # Generate pruned decision tree
+  game.pruned.tree <- prune.tree(game.tree, best = best.size)
+  
+  # Test pruned decision tree
+  game.pruned.pred <- predict(game.pruned.tree, newdata = game.test)
+  game.pruned.MSE[i] <- mean((game.pruned.pred - game.test$total_sales)^2)
+  
+}
+```
+
+Below is an example of a pruned tree, with this specific one having been generated with seed `3`.
+
+![](images/clipboard-1755941658.png)
+
 #### d. Results
+
+At the end of the loop, we printed the full list of MSE for each iteration of the original decision tree and pruned tree, followed by the average MSE over all tests for each model.
+
+```{r}
+#| output: false
+#| eval: false
+# Output MSE of decision trees
+game.tree.MSE
+game.pruned.MSE
+
+# Output average MSE of decision trees
+mean(game.tree.MSE)
+mean(game.pruned.MSE)
+```
+
+The average MSE of the original decision tree was `1.558671`. The average MSE of the pruned decision tree was `1.583467`.
+
+The pruned decision tree had a higher MSE, meaning that the pruning of the tree made the model less accurate in predicting the output from the four input variables.
 
 \newpage
 
@@ -258,7 +340,53 @@ game.lm.MSE
 ```{r}
 #| output: false
 #| eval: false
-#| 
+# Import libraries and dataset
+library(tidyverse)
+library(readr)
+library(tree)
+game <- read_csv("game.csv")
+
+# Remove publisher and developer
+game <- game %>% select(c("console", "genre", "critic_score", "total_sales", "release_month"))
+
+# Generate decision tree
+game.tree <- tree(total_sales ~ ., data = game)
+plot(game.tree)
+text(game.tree, pretty = 0)
+
+workable_seeds <- c(3,6,7,8,10,11,13,14,17,22)
+game.tree.MSE <- rep(0,10)
+game.pruned.MSE <- rep(0,10)
+for (i in 1:10) {
+  set.seed(workable_seeds[i])
+  # Train/Test decision tree
+  game.sample <- sample(1:nrow(game), nrow(game) * 0.8)
+  game.train <- game[game.sample, ]
+  game.test <- game[-game.sample, ]
+  game.tree <- tree(total_sales ~ ., data = game.train)
+  game.pred <- predict(game.tree, newdata = game.test)
+  game.tree.MSE[i] = mean((game.pred - game.test$total_sales)^2)
+  
+  # Cross Validation
+  cv.game.tree <- cv.tree(game.tree)
+  best.size <- cv.game.tree$size[which.min(cv.game.tree$dev)]
+  
+  # Generate pruned decision tree
+  game.pruned.tree <- prune.tree(game.tree, best = best.size)
+  
+  # Test pruned decision tree
+  game.pruned.pred <- predict(game.pruned.tree, newdata = game.test)
+  game.pruned.MSE[i] <- mean((game.pruned.pred - game.test$total_sales)^2)
+  
+}
+
+# Output MSE of decision trees
+game.tree.MSE
+game.pruned.MSE
+
+# Output average MSE of decision trees
+mean(game.tree.MSE)
+mean(game.pruned.MSE)
 ```
 
 \newpage
